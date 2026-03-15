@@ -192,5 +192,8 @@ class Program
         public int x;
         public int y;
     }
-    
+    class Student2
+    {
+        public int Age { get; set; }
+    }
 }
