@@ -1,0 +1,124 @@
+### Api
+- **Mục đích** của layer API
+	- Nhận HTTP request từ client
+	- Trả HTTP response về client
+	- Không chứa business logic phức tạp
+	- Không truy cập database trực tiếp
+	- => Nó chỉ làm nhiệm vụ giao tiếp với bên ngoài (Browser, Mobile App, Postman, Swagger)
+- ##### Controllers [[Understand architect- files/Controller - API|Controller - API]]
+	- Là nơi định nghĩa các endpoint API
+	- Vai trò
+		- Nhận request (GET, POST, ..)
+		- Validate dữ liệu đầu vào
+		- Gọi Service
+		- Trả về kết quả
+		- Là cửa ra vào của hệ thống
+- ##### Middleware
+	- Middleware là các lớp nằm trong pipeline xử lý request
+		- Ex: Request → Middleware 1 → Middleware 2 → Controller
+	- Vao trò:
+		- Xử lí exception toàn hệ thống
+		- Logging
+		- Authentication
+		- CORs
+		- Response formatting
+- ##### appsettings.json: là file cấu hình cho toàn app
+	- Dùng để:
+		- Lưu connection string
+		- Lưu config JWT
+		- Lưu config external API
+		- Không hardcode trong code
+- ##### appsettings.Development.json:
+	- Dùng để chạy môi trường Development
+	- ASP.NET Core có môi trường:
+		- Development: chạy cần: appsettings.json + appsettings.Development.json
+		- Staging
+		- Production
+- ##### Program.cs:  [[Understand architect- files/Program.cs]]
+	- Từ .Net6 trở lên thì Program.cs được xem **điểm khởi động (entry point**) của toàn bộ ứng dụng
+	- Nó làm 3 việc lớn
+		- 1. Khai báo dịch vụ (Dependency Injection – DI)
+		- 2. Cấu hình middleware pipeline
+		- 3. Chạy ứng dụng
+### Service
+- **Mục đích**: tầng xử lý nghiệp vụ (Business Logic Layer).
+	- Có nhiệm vụ:
+		-  Xử lý logic nghiệp vụ
+		- Kiểm tra rule
+		- Validate business
+		- Điều phối nhiều repository
+		- Mapping dữ liệu
+		- Không phụ thuộc HTTP
+- ##### Vì sao phải tách khỏi Controller:
+	- Nếu viết trong controller
+		- ![[../../99_ARCHIVE/Pasted image 20260212174809.png]]
+	- Khi tách Service:
+		- ![[../../99_ARCHIVE/Pasted image 20260212174931.png]]
+- ##### Tại sao phải chia folder theo từng domain ?
+	- Mỗi domain (User, Category) sẽ có:
+		- Request
+		- Response
+		- Interface
+		- Implementation
+	- Giúp:
+		- Code rõ ràng
+		- Không lẫn logic
+		- Dễ mở rộng
+- ##### Request.cs là gì? (nó là DTO request á mà: kiểu dữ liệu đc nhận từ client)
+	- Request.cs thường chứa DTO (Data Transfer Object). [[Understand architect- files/DTO]]
+		- Ví dụ: `public class CreateUserRequest`
+				`{`
+				    `public string Name { get; set; }`
+				    `public int Age { get; set; }`
+				`}`
+	- Tại sao không dùng luôn entity:
+		- ![[../../99_ARCHIVE/Pasted image 20260212181937.png]]
+	- Luồng đúng khi tạo User
+		- ![[../../99_ARCHIVE/Pasted image 20260212182132.png]]
+		- ![[../../99_ARCHIVE/Pasted image 20260212182146.png]]
+- **Vậy Request.cs trong Service khác gì Request của API?**
+	- Thông thường:
+		- API nhận Request
+		- Service dùng Request
+		- Service convert sang Entity
+	- Trong kiến trúc đơn giản, Request nằm ở Service để:
+		- API không phụ thuộc Repository
+		- Service làm trung gian dữ liệu
+### Repository: Data Access Layer (DAL)
+- **Nhiệm vụ chính**:
+	- Làm việc với database
+	- Query dữ liệu
+	- Lưu dữ liệu
+	- Mapping giữa C# object và DB table (thông qua EF Core)
+- **Abstraction/BaseEntity.cs**
+	- Thường chứa các field chung cho tất cả entity | Chuẩn hóa cấu trúc
+	- Mục đích:
+		- Tránh lặp lại Id ở mỗi entity
+		- Chuẩn hóa cấu trúc DB
+- **Abstraction/IAuditableEntity.cs**
+	- Thường dùng để tracking
+	- Mục đích:
+		- Theo dõi ai tạo
+		- Theo dõi khi nào update
+		- Dùng cho audit log
+- **Entity**: đại diện cho table trong database, bảng thiết kế db
+- **Migrations**
+	- Đây là nơi EF Core lưu:
+		- Lịch sử thay đổi database
+		- File migration
+		- Snapshot model
+- **AppDbContext.cs**
+	- Vai trò:
+		- Quản lý connection
+		- Khai báo table, set rule cho nó
+		- Cấu hình relationship, seed data
+		- Fluent API config
+- **Repo có phải lúc nào cũng cần không?**
+	- EF Core bản thân đã là một Repository + UnitOfWork.
+	- Nên trong project nhỏ:
+		- Bạn có thể inject DbContext trực tiếp vào Service.
+	- Nhưng trong project lớn:
+		- Repository giúp:
+			- Dễ mock khi test
+			- Tách Data Access khỏi Business
+			- Dễ thay đổi ORM

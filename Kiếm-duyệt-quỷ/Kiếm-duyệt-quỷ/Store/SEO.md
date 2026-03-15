@@ -1,0 +1,17 @@
+**SEO**: Search Engine Optimization: làm cho google hiểu và thích website của bạn = tối ưu hóa công cụ tìm kiếm
+- Mục tiêu của SEO:
+	- Làm cho website của bạn xuất hiện ở vị trí cao trên kết quả tìm kiếm tự nhiên.
+- Organic traffic là gì?
+	- Là lượng truy cập website
+	-  SEO tốt -> thứ hạng cao -> Nhiều organic traffic
+-  3 loại SEO chính:
+	- On-Page SEO
+		- Là tối ưu những gì nằm trên chính website của bạn. Ví dụ: Tối ưu từ khóa, title, mate description, headingm nội dung chất lượng, ...
+	- Off-Page SEO
+		- Là tối ưu bên ngoài website để tăng độ uy tín
+			- Blackink(website khác trỏ link về bạn)
+			- Social signals
+			- Brand mention
+			- Ví dụ như: một bài viết của bạn được nhiều người share hoặc nhiều website lớn khác trỏ link website của bạn -> con bot của Google đánh giá web bạn uy tín hơn.
+	- Technical SEO
+		- Là kĩ thuật tối ưu phía sau website, bao gồm như: Tốc độ tải trang, https, cấu trúc website, ...
